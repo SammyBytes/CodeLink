@@ -7,12 +7,14 @@ import { Result } from "@shared/Result";
 import { LoggerConfig } from "@configs/logger";
 import { formatZodErrors } from "@shared/ZodErrorMapper";
 import { UserEntity } from "@modules/Auth/core/entities/UserEntity";
+import { AUTH_INFRASTRUCTURE_TOKENS } from "@modules/Auth/infrastructure/InfrastructureTokens";
 
 @injectable()
 export class RegisterUseCase {
   constructor(
-    @inject("IUserRepository") private userRepo: IUserRepository,
-    @inject("Argon2dPasswordHasherServices")
+    @inject(AUTH_INFRASTRUCTURE_TOKENS.IUserRepository)
+    private userRepo: IUserRepository,
+    @inject(AUTH_INFRASTRUCTURE_TOKENS.Argon2dPasswordHasherServices)
     private passwordHasher: IPasswordHasherServices,
     @inject(LoggerConfig) private logger: LoggerConfig
   ) {}

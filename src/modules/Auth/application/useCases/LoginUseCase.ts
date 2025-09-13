@@ -6,13 +6,15 @@ import { Result } from "@shared/Result";
 import { formatZodErrors } from "@shared/ZodErrorMapper";
 import { inject, injectable } from "tsyringe";
 import { IPasswordHasherServices } from "../services/IPasswordHasherServices";
+import { AUTH_INFRASTRUCTURE_TOKENS } from "@modules/Auth/infrastructure/InfrastructureTokens";
 
 @injectable()
 export class LoginUseCase {
   constructor(
     @inject(LoggerConfig) private logger: LoggerConfig,
-    @inject("UserRepository") private userRepo: IUserRepository,
-    @inject("Argon2dPasswordHasherServices")
+    @inject(AUTH_INFRASTRUCTURE_TOKENS.IUserRepository)
+    private userRepo: IUserRepository,
+    @inject(AUTH_INFRASTRUCTURE_TOKENS.Argon2dPasswordHasherServices)
     private passwordHasher: IPasswordHasherServices
   ) {}
 
