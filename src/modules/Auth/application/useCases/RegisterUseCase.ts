@@ -12,7 +12,7 @@ import { UserEntity } from "@modules/Auth/core/entities/UserEntity";
 export class RegisterUseCase {
   constructor(
     @inject("IUserRepository") private userRepo: IUserRepository,
-    @inject("IPasswordHasherServices")
+    @inject("Argon2dPasswordHasherServices")
     private passwordHasher: IPasswordHasherServices,
     @inject(LoggerConfig) private logger: LoggerConfig
   ) {}
