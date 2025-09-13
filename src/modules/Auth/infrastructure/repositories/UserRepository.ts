@@ -1,5 +1,5 @@
 import { IUserEntity } from "@modules/Auth/core/models/IUserEntity";
-import { IUserRepository } from "@modules/Auth/core/repositories/IUserRepository";
+import type { IUserRepository } from "@modules/Auth/core/repositories/IUserRepository";
 import { UserMapper } from "../mappers/UserMapper";
 import { PrismaClient } from "generated/prisma";
 import { inject, injectable } from "tsyringe";

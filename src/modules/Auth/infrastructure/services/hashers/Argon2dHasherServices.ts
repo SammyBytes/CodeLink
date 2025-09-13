@@ -1,4 +1,4 @@
-import { IPasswordHasherServices } from "@modules/Auth/application/services/IPasswordHasherServices";
+import type { IPasswordHasherServices } from "@modules/Auth/application/services/IPasswordHasherServices";
 import { hash as argon2dHash, verify as argon2dVerify } from "argon2";
 import { injectable } from "tsyringe";
 

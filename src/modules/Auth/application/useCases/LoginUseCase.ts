@@ -1,12 +1,12 @@
 import { LoggerConfig } from "@configs/logger";
 import { IUserEntity } from "@modules/Auth/core/models/IUserEntity";
-import { IUserRepository } from "@modules/Auth/core/repositories/IUserRepository";
+import type { IUserRepository } from "@modules/Auth/core/repositories/IUserRepository";
 import { loginSchema } from "@modules/Auth/core/validations/AuthSchemas";
 import { Result } from "@shared/Result";
-import { formatZodErrors } from "@shared/ZodErrorMapper";
 import { inject, injectable } from "tsyringe";
-import { IPasswordHasherServices } from "../services/IPasswordHasherServices";
+import type { IPasswordHasherServices } from "../services/IPasswordHasherServices";
 import { AUTH_INFRASTRUCTURE_TOKENS } from "@modules/Auth/infrastructure/InfrastructureTokens";
+import { handleZodError } from "@shared/validations/FormatZodErrors";
 
 @injectable()
 export class LoginUseCase {
@@ -22,7 +22,7 @@ export class LoginUseCase {
     try {
       const { success, data, error } = await loginSchema.safeParseAsync(input);
       if (!success) {
-        const message = formatZodErrors(error);
+        const message = handleZodError(error).message;
         this.logger.logger.warn({ message }, "Validation failed");
         return Result.fail(message);
       }

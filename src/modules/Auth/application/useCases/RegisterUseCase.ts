@@ -1,13 +1,16 @@
 import { IUserEntity } from "@modules/Auth/core/models/IUserEntity";
 import { registerSchema } from "@modules/Auth/core/validations/AuthSchemas";
-import { IUserRepository } from "@modules/Auth/core/repositories/IUserRepository";
-import { IPasswordHasherServices } from "@modules/Auth/application/services/IPasswordHasherServices";
+import type { IUserRepository } from "@modules/Auth/core/repositories/IUserRepository";
+import type { IPasswordHasherServices } from "@modules/Auth/application/services/IPasswordHasherServices";
 import { inject, injectable } from "tsyringe";
 import { Result } from "@shared/Result";
 import { LoggerConfig } from "@configs/logger";
-import { formatZodErrors } from "@shared/ZodErrorMapper";
 import { UserEntity } from "@modules/Auth/core/entities/UserEntity";
 import { AUTH_INFRASTRUCTURE_TOKENS } from "@modules/Auth/infrastructure/InfrastructureTokens";
+import {
+  formatZodErrors,
+  handleZodError,
+} from "@shared/validations/FormatZodErrors";
 
 @injectable()
 export class RegisterUseCase {
@@ -23,7 +26,7 @@ export class RegisterUseCase {
     try {
       const data = await registerSchema.safeParseAsync(input);
       if (!data.success) {
-        const message = formatZodErrors(data.error);
+        const message = handleZodError(data.error).message;
         this.logger.logger.warn({ message }, "Validation failed");
         return Result.fail(message);
       }

@@ -3,6 +3,7 @@
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "Node",
+
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -10,14 +11,16 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "outDir": "dist",
-    "baseUrl": "src",
+    "baseUrl": "./src",
     "paths": {
       "@modules/*": ["modules/*"],
       "@shared/*": ["shared/*"],
       "@configs/*": ["configs/*"],
       "@generated/*": ["../generated/*"]
-    }
+    },
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true
   },
-  "include": ["src"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }
