@@ -1,29 +1,35 @@
+# Variables
+@host = http://localhost:1234
+@refreshToken = 01K53E3QMYC0YANCP7ZE6ENQ84
+
 ### Register a new user
-POST http://localhost:1234/api/v1/auth/register
+POST {{host}}/api/v1/auth/register
 Content-Type: application/x-www-form-urlencoded
 
 email=testuser1@example.com&username=testuser1&password=Password123
 
 ###
 
-### Register with missing fields (to trigger validation)
-POST http://localhost:1234/api/v1/auth/register
-Content-Type: application/x-www-form-urlencoded
-
-email=&username=testuser2&password=
-
-###
-
 ### Login with existing user
-POST http://localhost:1234/api/v1/auth/login
+POST {{host}}/api/v1/auth/login
 Content-Type: application/x-www-form-urlencoded
 
 email=testuser1@example.com&password=Password123
 
 ###
 
+### Refresh access token using refresh token
+POST {{host}}/api/v1/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+###
+
 ### Login with wrong password
-POST http://localhost:1234/api/v1/auth/login
+POST {{host}}/api/v1/auth/login
 Content-Type: application/x-www-form-urlencoded
 
 email=testuser1@example.com&password=WrongPassword
@@ -31,7 +37,7 @@ email=testuser1@example.com&password=WrongPassword
 ###
 
 ### Login with non-existing user
-POST http://localhost:1234/api/v1/auth/login
+POST {{host}}/api/v1/auth/login
 Content-Type: application/x-www-form-urlencoded
 
 email=nonexistent@example.com&password=Password123
