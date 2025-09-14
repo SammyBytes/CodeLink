@@ -28,14 +28,14 @@ export class RegisterUseCase {
       const data = await registerSchema.safeParseAsync(input);
       if (!data.success) {
         const message = handleZodError(data.error).message;
-        this.logger.logger.warn({ message }, "Validation failed");
+        this.logger.log.warn({ message }, "Validation failed");
         return Result.fail(message);
       }
 
       const existingUser = await this.userRepo.findByEmail(data.data.email);
       if (existingUser) {
         const message = `Email ${data.data.email} is already in use`;
-        this.logger.logger.warn({ email: data.data.email }, message);
+        this.logger.log.warn({ email: data.data.email }, message);
         return Result.fail(message);
       }
 
@@ -48,7 +48,7 @@ export class RegisterUseCase {
       );
       return Result.ok(await this.userRepo.create(user));
     } catch (error) {
-      this.logger.logger.error({ error }, "Error occurred during registration");
+      this.logger.log.error({ error }, "Error occurred during registration");
       return Result.fail("Internal server error");
     }
   }

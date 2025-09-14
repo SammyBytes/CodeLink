@@ -30,7 +30,7 @@ export class LoginUseCase {
       const { success, data, error } = await loginSchema.safeParseAsync(input);
       if (!success) {
         const message = handleZodError(error).message;
-        this.logger.logger.warn({ message }, "Validation failed");
+        this.logger.log.warn({ message }, "Validation failed");
         return Result.fail(message);
       }
 
@@ -60,7 +60,7 @@ export class LoginUseCase {
 
       return Result.ok({ accessToken, refreshToken });
     } catch (error) {
-      this.logger.logger.error({ error }, "Login failed");
+      this.logger.log.error({ error }, "Login failed");
       return Result.fail("Login failed");
     }
   }

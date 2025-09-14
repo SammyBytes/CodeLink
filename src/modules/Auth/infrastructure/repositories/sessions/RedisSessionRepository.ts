@@ -34,7 +34,20 @@ export class RedisSessionRepository implements ISessionRepository {
   }
 
   async revokeAllForUser(userId: string): Promise<void> {
-    throw new Error("Method not implemented.");
+    const keys: string[] = await this.redisClient.keys("session:*");
+    for (const key of keys) {
+      const sessionData = await this.redisClient.get(key);
+      if (!sessionData) continue;
+      try {
+        const sessionObj = JSON.parse(sessionData);
+        if (sessionObj.userId === userId) {
+          await this.redisClient.del(key);
+        }
+      } catch (e) {
+        // Ignore malformed session data
+        continue;
+      }
+    }
   }
 
   async rotateRefreshToken(

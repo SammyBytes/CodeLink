@@ -20,14 +20,14 @@ export class RegisterProfileUseCase {
       const existingProfile = await this.profileRepo.findByUserId(userId);
       if (existingProfile) {
         const message = `Profile for user ${userId} already exists`;
-        this.logger.logger.warn({ userId }, message);
+        this.logger.log.warn({ userId }, message);
         return { success: false, message };
       }
 
       const parsed = await updateProfileSchema.safeParseAsync(input);
       if (!parsed.success) {
         const message = handleZodError(parsed.error).message;
-        this.logger.logger.warn({ userId, input }, message);
+        this.logger.log.warn({ userId, input }, message);
         return { success: false, message };
       }
 
@@ -40,7 +40,7 @@ export class RegisterProfileUseCase {
 
       return { success: true, profile: created };
     } catch (error) {
-      this.logger.logger.error(
+      this.logger.log.error(
         { error, userId, input },
         "Error occurred during profile registration"
       );

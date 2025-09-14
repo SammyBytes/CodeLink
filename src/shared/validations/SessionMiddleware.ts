@@ -34,7 +34,6 @@ export const SessionMiddleware = createMiddleware<SessionEnvironment>(
       );
       if (!valid) {
         await sessionService.revoke(payload.sessionId);
-        c.set("Session", null);
         return c.json({ message: "Unauthorized: invalid session" }, 401);
       }
 
