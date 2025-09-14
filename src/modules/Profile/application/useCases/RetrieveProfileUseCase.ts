@@ -16,12 +16,12 @@ export class RetrieveProfileUseCase {
     try {
       const profile = await this.profileRepo.findByUserId(userId);
       if (!profile) {
-        this.logger.logger.warn({ userId }, "Profile not found");
+        this.logger.log.warn({ userId }, "Profile not found");
         return { success: false, message: "Profile not found" };
       }
       return { success: true, profile };
     } catch (error) {
-      this.logger.logger.error({ error }, "Error retrieving profile");
+      this.logger.log.error({ error }, "Error retrieving profile");
       return { success: false, message: "Internal server error" };
     }
   }
