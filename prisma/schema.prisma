@@ -17,7 +17,7 @@ datasource db {
 
 model User {
   id              Int      @id @default(autoincrement())
-  userId          String   @unique @default(ulid())
+  userId          String   @unique
   email           String   @unique
   username        String   @unique
   password        String?
@@ -28,9 +28,27 @@ model User {
 
   Profile      Profile?
   ExternalAuth ExternalAuth[]
+  Sessions     Sessions[]
 
   @@index([email])
   @@index([userId])
+}
+
+model Sessions {
+  id               Int      @id @default(autoincrement())
+  sessionId        String   @unique
+  userId           String
+  refreshTokenHash String   @unique
+  revoked          Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  expiresAt        DateTime
+  ip               String?
+  userAgent        String?
+
+  user User @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([refreshTokenHash])
 }
 
 model ExternalAuth {
