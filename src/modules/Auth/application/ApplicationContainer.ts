@@ -1,6 +1,6 @@
 import { AUTH_APPLICATION_TOKENS } from "./ApplicationTokens";
 import { LoginUseCase } from "./useCases/LoginUseCase";
-import { RegenerateTokensUseCase } from "./useCases/RegenenateTokensUseCase";
+import { RegenerateTokensUseCase } from "./useCases/RegenerateTokensUseCase";
 import { RegisterUseCase } from "./useCases/RegisterUseCase";
 
 import { container } from "tsyringe";

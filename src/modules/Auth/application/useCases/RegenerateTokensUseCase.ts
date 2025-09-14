@@ -53,15 +53,18 @@ export class RegenerateTokensUseCase {
 
       // Generate new tokens
       const newRefreshToken = IdGenerator.newId();
-      const newAccessToken = await createJWT({ userId, sessionId });
-
-      // Rotate refresh token
-      await this.sessionService.create(
+      const newSession = await this.sessionService.create(
         userId,
         newRefreshToken,
         7 * 24 * 60 * 60
-      ); // 7 days
+      );
+      // Create new access token
+      const newAccessToken = await createJWT({
+        userId,
+        sessionId: newSession,
+      });
 
+      
       this.logger.log.info(
         `RegenerateTokensUseCase - Tokens regenerated for user: ${userId}, session: ${sessionId}`
       );

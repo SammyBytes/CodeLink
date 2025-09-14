@@ -8,7 +8,7 @@ import { LoginUseCase } from "../application/useCases/LoginUseCase";
 import { authRateLimit, publicRateLimit } from "@configs/honojs/config";
 import { zValidationErrorHandler } from "@shared/validations/ZodMiddleware";
 import { refreshSessionSchema } from "../core/validations/SessionSchemas";
-import { RegenerateTokensUseCase } from "../application/useCases/RegenenateTokensUseCase";
+import { RegenerateTokensUseCase } from "../application/useCases/RegenerateTokensUseCase";
 
 export const AuthRouter = new Hono();
 
@@ -53,7 +53,6 @@ AuthRouter.post(
   async (c) => {
     try {
       const validated = c.get("validatedData");
-      console.log("Validated data:", validated);
       const regenerateTokens = container.resolve<RegenerateTokensUseCase>(
         RegenerateTokensUseCase
       );
