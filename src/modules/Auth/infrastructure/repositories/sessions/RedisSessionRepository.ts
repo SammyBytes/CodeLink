@@ -4,7 +4,6 @@ import { ISessionRepository } from "@modules/Auth/core/repositories/ISessionRepo
 import { RedisClient } from "bun";
 
 import { inject, injectable } from "tsyringe";
-import { tr } from "zod/v4/locales";
 
 @injectable()
 export class RedisSessionRepository implements ISessionRepository {

@@ -71,7 +71,6 @@ export function formatZodErrors(error: ZodError): FieldError[] {
 
     return {
       field: issue.path.join(".") || "unknown",
-      code,
       message,
     };
   });
