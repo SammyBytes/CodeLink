@@ -7,6 +7,7 @@ import { RegisterProfileUseCase } from "../application/useCases/RegisterProfileU
 import { RetrieveProfileUseCase } from "../application/useCases/RetrieveProfileUseCase";
 import { jwt } from "hono/jwt";
 import { RetrieveProfileResponseDto } from "../application/dtos/RetrieveProfileResponseDto";
+import { publicRateLimit } from "@configs/honojs/config";
 
 export const ProfileRouter = new Hono();
 
@@ -19,6 +20,7 @@ ProfileRouter.use(
 
 ProfileRouter.patch(
   "/",
+  publicRateLimit,
   SessionMiddleware,
   zValidationErrorHandler("json", updateProfileSchema),
   async (c) => {
@@ -40,7 +42,7 @@ ProfileRouter.patch(
   }
 );
 
-ProfileRouter.get("/me", SessionMiddleware, async (c) => {
+ProfileRouter.get("/me", publicRateLimit, SessionMiddleware, async (c) => {
   const { userId } = c.get("Session");
 
   const useCase = container.resolve<RetrieveProfileUseCase>(
@@ -57,7 +59,7 @@ ProfileRouter.get("/me", SessionMiddleware, async (c) => {
   }
 });
 
-ProfileRouter.get("/:userId", SessionMiddleware, async (c) => {
+ProfileRouter.get("/:userId", publicRateLimit, SessionMiddleware, async (c) => {
   const { userId } = c.req.param();
 
   const useCase = container.resolve<RetrieveProfileUseCase>(
