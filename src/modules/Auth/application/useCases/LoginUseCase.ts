@@ -8,6 +8,10 @@ import type { IPasswordHasherServices } from "../services/IPasswordHasherService
 import { AUTH_INFRASTRUCTURE_TOKENS } from "@modules/Auth/infrastructure/InfrastructureTokens";
 import { handleZodError } from "@shared/validations/FormatZodErrors";
 
+import type { ISessionService } from "@modules/Auth/application/services/ISessionService";
+import { createJWT } from "../helpers/JwtHelper";
+import { UserLoginResponseDTO } from "../dtos/UserLoginResponseDTO";
+
 @injectable()
 export class LoginUseCase {
   constructor(
@@ -15,10 +19,12 @@ export class LoginUseCase {
     @inject(AUTH_INFRASTRUCTURE_TOKENS.IUserRepository)
     private userRepo: IUserRepository,
     @inject(AUTH_INFRASTRUCTURE_TOKENS.Argon2dPasswordHasherServices)
-    private passwordHasher: IPasswordHasherServices
+    private passwordHasher: IPasswordHasherServices,
+    @inject(AUTH_INFRASTRUCTURE_TOKENS.ISessionService)
+    private sessionService: ISessionService
   ) {}
 
-  async execute(input: unknown): Promise<Result<IUserEntity, string>> {
+  async execute(input: unknown): Promise<Result<UserLoginResponseDTO, string>> {
     try {
       const { success, data, error } = await loginSchema.safeParseAsync(input);
       if (!success) {
@@ -28,30 +34,30 @@ export class LoginUseCase {
       }
 
       const user = await this.userRepo.findByEmail(data.email);
-      if (!user) {
-        const message = "User not found";
-        this.logger.logger.warn({ email: data.email }, message);
-        return Result.fail(message);
-      }
-
-      if (!user.password) {
-        const message = "User has no password set";
-        this.logger.logger.warn({ email: data.email }, message);
-        return Result.fail(message);
+      if (!user || !user.password) {
+        return Result.fail("Invalid credentials");
       }
 
       const valid = await this.passwordHasher.compare(
         data.password,
         user.password
       );
-
       if (!valid) {
-        const message = "Invalid credentials";
-        this.logger.logger.warn({ email: data.email }, message);
-        return Result.fail(message);
+        return Result.fail("Invalid credentials");
       }
 
-      return Result.ok(user);
+      // Generate session
+      const refreshToken = Bun.randomUUIDv7();
+      const sessionId = await this.sessionService.create(
+        user.userId,
+        refreshToken,
+        7 * 24 * 60 * 60 // 7 days
+      );
+
+      // Generate JWT (access token)
+      const accessToken = await createJWT({ userId: user.userId, sessionId });
+
+      return Result.ok({ accessToken, refreshToken });
     } catch (error) {
       this.logger.logger.error({ error }, "Login failed");
       return Result.fail("Login failed");

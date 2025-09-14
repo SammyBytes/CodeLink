@@ -15,15 +15,17 @@ export class UserEntity implements IUserEntity {
   }
 
   static createNew(
+    userId: string,
     email: string,
     username: string,
     password: string
   ): UserEntity {
+    if (!userId) throw new Error("userId is required");
     if (!email.includes("@")) throw new Error("Invalid email");
     if (username.length < 3) throw new Error("Username too short");
 
     return new UserEntity({
-      userId: "", // DB will set it
+      userId: userId,
       email,
       username,
       password,
