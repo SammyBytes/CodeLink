@@ -8,6 +8,15 @@ import { SessionMapper } from "../../mappers/SessionMapper";
 @injectable()
 export class SessionRepository implements ISessionRepository {
   constructor(@inject(PrismaClient) private prisma: PrismaClient) {}
+  async findByRefreshToken(
+    refreshToken: string
+  ): Promise<ISessionEntity | null> {
+    const session = await this.prisma.sessions.findFirst({
+      where: { refreshTokenHash: refreshToken, revoked: false },
+    });
+
+    return session ? SessionMapper.toDomain(session) : null;
+  }
 
   async create(session: ISessionEntity): Promise<void> {
     await this.prisma.sessions.create({
@@ -22,13 +31,15 @@ export class SessionRepository implements ISessionRepository {
     return session ? SessionMapper.toDomain(session) : null;
   }
   async revoke(sessionId: string): Promise<void> {
-    await this.prisma.sessions.delete({
+    await this.prisma.sessions.update({
       where: { sessionId: sessionId, revoked: false },
+      data: { revoked: true },
     });
   }
   async revokeAllForUser(userId: string): Promise<void> {
-    await this.prisma.sessions.deleteMany({
+    await this.prisma.sessions.updateMany({
       where: { userId, revoked: false },
+      data: { revoked: true },
     });
   }
   async rotateRefreshToken(

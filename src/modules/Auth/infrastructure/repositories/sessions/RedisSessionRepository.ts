@@ -8,6 +8,25 @@ import { inject, injectable } from "tsyringe";
 @injectable()
 export class RedisSessionRepository implements ISessionRepository {
   constructor(@inject(RedisClient) private redisClient: RedisClient) {}
+  async findByRefreshToken(
+    refreshToken: string
+  ): Promise<ISessionEntity | null> {
+    const keys: string[] = await this.redisClient.keys("session:*");
+    for (const key of keys) {
+      const sessionData = await this.redisClient.get(key);
+      if (!sessionData) continue;
+      try {
+        const sessionObj = JSON.parse(sessionData);
+        if (sessionObj.refreshTokenHash === refreshToken) {
+          return SessionMapper.toDomain(sessionObj);
+        }
+      } catch (e) {
+        // Ignore malformed session data
+        continue;
+      }
+    }
+    return null;
+  }
 
   async create(session: ISessionEntity): Promise<void> {
     const key = `session:${session.sessionId}`;
@@ -48,24 +67,6 @@ export class RedisSessionRepository implements ISessionRepository {
         continue;
       }
     }
-  }
-
-  async rotateRefreshToken(
-    sessionId: string,
-    newHash: string,
-    expiresAt: Date
-  ): Promise<void> {
-    const key = `session:${sessionId}`;
-    const sessionData = await this.redisClient.get(key);
-    if (!sessionData) {
-      throw new Error("Session not found");
-    }
-    const sessionObj = JSON.parse(sessionData);
-    sessionObj.refreshTokenHash = newHash;
-    sessionObj.expiresAt = expiresAt;
-
-    await this.redisClient.set(key, JSON.stringify(sessionObj));
-    await this.redisClient.expire(key, this.getTimestampInSeconds(expiresAt));
   }
 
   private getTimestampInSeconds(date: Date): number {
