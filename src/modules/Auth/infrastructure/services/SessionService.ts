@@ -21,7 +21,7 @@ export class SessionService implements ISessionService {
   ): Promise<string> {
     const sessionId = ulid();
     const expiresAt = new Date(Date.now() + expiresIn * 1000);
-    const refreshTokenHash = Bun.hash(refreshToken).toString();
+    const refreshTokenHash = await this.hashToken(refreshToken);
     const now = new Date();
 
     // Save in Redis
@@ -75,7 +75,7 @@ export class SessionService implements ISessionService {
   ): Promise<void> {
     const expiresAt = new Date(Date.now() + expiresIn * 1000);
 
-    const refreshTokenHash = Bun.hash(newRefreshToken).toString();
+    const refreshTokenHash = await this.hashToken(newRefreshToken);
     await Promise.allSettled([
       this.redisRepo.rotateRefreshToken(sessionId, refreshTokenHash, expiresAt),
       this.sessionRepo.rotateRefreshToken(
@@ -84,5 +84,13 @@ export class SessionService implements ISessionService {
         expiresAt
       ),
     ]);
+  }
+
+  private async hashToken(token: string): Promise<string> {
+    const data = new TextEncoder().encode(token);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+    return Array.from(new Uint8Array(hashBuffer))
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
   }
 }

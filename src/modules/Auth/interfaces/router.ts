@@ -5,14 +5,14 @@ import { loginSchema, registerSchema } from "../core/validations/AuthSchemas";
 import { container } from "tsyringe";
 import { RegisterUseCase } from "../application/useCases/RegisterUseCase";
 import { LoginUseCase } from "../application/useCases/LoginUseCase";
-import { publicRateLimit } from "@configs/honojs/config";
+import { authRateLimit, publicRateLimit } from "@configs/honojs/config";
 import { zValidationErrorHandler } from "@shared/validations/ZodMiddleware";
 
 export const AuthRouter = new Hono();
 
 AuthRouter.post(
   "/register",
-  publicRateLimit,
+  authRateLimit,
   zValidationErrorHandler("form", registerSchema),
   async (c) => {
     const validated = c.get("validatedData");
@@ -29,7 +29,7 @@ AuthRouter.post(
 
 AuthRouter.post(
   "/login",
-  publicRateLimit,
+  authRateLimit,
   zValidationErrorHandler("form", loginSchema),
   async (c) => {
     const validated = c.get("validatedData");
