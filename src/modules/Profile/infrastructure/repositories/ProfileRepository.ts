@@ -1,5 +1,5 @@
 import { IProfileEntity } from "@modules/Profile/core/models/IProfileEntity";
-import { IProfileRepository } from "@modules/Profile/core/repositories/IProfileRepository";
+import type { IProfileRepository } from "@modules/Profile/core/repositories/IProfileRepository";
 import { PrismaClient } from "generated/prisma";
 
 import { inject, injectable } from "tsyringe";

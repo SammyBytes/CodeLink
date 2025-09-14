@@ -4,8 +4,17 @@ import { Hono } from "hono";
 import { container } from "tsyringe";
 import { updateProfileSchema } from "../core/validations/ProfileSchemas";
 import { RegisterProfileUseCase } from "../application/useCases/RegisterProfileUseCase";
+import { RetrieveProfileUseCase } from "../application/useCases/RetrieveProfileUseCase";
+import { jwt } from "hono/jwt";
 
 export const ProfileRouter = new Hono();
+
+ProfileRouter.use(
+  "/",
+  jwt({
+    secret: Bun.env.JWT_SECRET,
+  })
+);
 
 ProfileRouter.patch(
   "/",
@@ -31,10 +40,10 @@ ProfileRouter.patch(
 ProfileRouter.get("/", SessionMiddleware, async (c) => {
   const { userId } = c.get("Session");
 
-  const useCase = container.resolve<RegisterProfileUseCase>(
-    RegisterProfileUseCase
+  const useCase = container.resolve<RetrieveProfileUseCase>(
+    RetrieveProfileUseCase
   );
-  const { success, message, profile } = await useCase.execute(userId, {});
+  const { success, message, profile } = await useCase.execute(userId);
 
   if (success) {
     return c.json({ message: "Profile fetched", data: profile });

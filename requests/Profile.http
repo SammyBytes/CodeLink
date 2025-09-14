@@ -1,0 +1,25 @@
+### Variables
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMUs1MlY2TVoxUUdKOVMyR1BZMjBCQTlYMCIsInNlc3Npb25JZCI6IjAxSzUzNDNLR1RFMktZTjFYMlhUWFg0MkVOIiwiZXhwIjoxNzU3ODIxMjQxfQ.dra0j9SrqyfY4Ry1PvJ8qBHno4WaIRx_6oT2o21dDpU
+@userId = 01K52V6MZ1QGJ9S2GPY20BA9X0
+@host = http://localhost:1234
+
+### Actualizar perfil (PATCH)
+PATCH {{host}}/api/v1/profile
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Sammy",
+  "lastName": "Gonzalez",
+  "country": "Dominican Republic",
+  "city": "Santo Domingo",
+  "bio": "Desarrollador fullstack",
+  "avatar": "https://example.com/avatar.png",
+  "languages": ["TypeScript", "C#"],
+  "frameworks": ["Blazor", "HonoJS"],
+  "tools": ["VSCode", "Git"]
+}
+
+### Obtener perfil (GET)
+GET {{host}}/api/v1/profile
+Authorization: Bearer {{token}}

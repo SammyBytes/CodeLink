@@ -5,13 +5,18 @@ import { Hono } from "hono";
 import { logger } from "hono/logger";
 import { AuthRouter } from "@modules/Auth/interfaces/router";
 import { ProfileRouter } from "@modules/Profile/interfaces/ProfileRouter";
-import type { JwtVariables } from "hono/jwt";
+import { jwt, type JwtVariables } from "hono/jwt";
 
 type Variables = JwtVariables;
 
 const app = new Hono<{ Variables: Variables }>();
 app.use("*", logger());
-
+// app.use(
+//   "/profile/*",
+//   jwt({
+//     secret: Bun.env.JWT_SECRET,
+//   })
+// );
 app.route("/api/v1/auth", AuthRouter);
 app.route("/api/v1/profile", ProfileRouter);
 

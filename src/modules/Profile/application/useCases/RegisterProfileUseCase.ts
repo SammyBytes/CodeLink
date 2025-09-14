@@ -1,6 +1,6 @@
 import { LoggerConfig } from "@configs/logger";
 import { ProfileEntity } from "@modules/Profile/core/entities/ProflieEntity";
-import { IProfileRepository } from "@modules/Profile/core/repositories/IProfileRepository";
+import type { IProfileRepository } from "@modules/Profile/core/repositories/IProfileRepository";
 import { updateProfileSchema } from "@modules/Profile/core/validations/ProfileSchemas";
 import { PROFILE_INFRASTRUCTURE_TOKENS } from "@modules/Profile/infrastructure/InfrastructureTokens";
 import { handleZodError } from "@shared/validations/FormatZodErrors";
