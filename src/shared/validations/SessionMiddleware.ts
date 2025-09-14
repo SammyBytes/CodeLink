@@ -8,34 +8,48 @@ import { AUTH_INFRASTRUCTURE_TOKENS } from "@modules/Auth/infrastructure/Infrast
 const sessionService = container.resolve<ISessionService>(
   AUTH_INFRASTRUCTURE_TOKENS.ISessionService
 );
+
+type SessionEnvironment = {
+  Variables: {
+    Session: { userId: string; sessionId: string };
+  };
+};
 /**
  * Middleware to validate session from JWT payload.
  * Expects `jwtPayload` to be set in context (e.g., by a previous JWT middleware).
  * If session is invalid, responds with 401 Unauthorized.
  * If valid, calls next middleware/handler.
  */
-export const SessionMiddleware = createMiddleware(async (c: Context, next) => {
-  try {
-    const payload = c.get("jwtPayload") as SessionPayload | undefined;
-    if (!payload) {
-      return c.json({ message: "Unauthorized: no payload" }, 401);
-    }
+export const SessionMiddleware = createMiddleware<SessionEnvironment>(
+  async (c: Context, next) => {
+    try {
+      const payload = c.get("jwtPayload") as SessionPayload | undefined;
+      if (!payload) {
+        return c.json({ message: "Unauthorized: no payload" }, 401);
+      }
 
-    const valid = await sessionService.validate(
-      payload.userId,
-      payload.sessionId
-    );
-    if (!valid) {
-      await sessionService.revoke(payload.sessionId);
-      return c.json({ message: "Unauthorized: invalid session" }, 401);
-    }
+      const valid = await sessionService.validate(
+        payload.userId,
+        payload.sessionId
+      );
+      if (!valid) {
+        await sessionService.revoke(payload.sessionId);
+        return c.json({ message: "Unauthorized: invalid session" }, 401);
+      }
 
-    await next();
-  } catch (error) {
-    console.error("SessionMiddleware error:", error);
-    return c.json({ message: "Unauthorized: session check failed" }, 401);
+      // Session is valid, proceed to next
+      c.set("Session", {
+        userId: payload.userId,
+        sessionId: payload.sessionId,
+      });
+
+      await next();
+    } catch (error) {
+      console.error("SessionMiddleware error:", error);
+      return c.json({ message: "Unauthorized: session check failed" }, 401);
+    }
   }
-});
+);
 
 type SessionPayload = {
   userId: string;
