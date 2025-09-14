@@ -6,11 +6,12 @@ import { updateProfileSchema } from "../core/validations/ProfileSchemas";
 import { RegisterProfileUseCase } from "../application/useCases/RegisterProfileUseCase";
 import { RetrieveProfileUseCase } from "../application/useCases/RetrieveProfileUseCase";
 import { jwt } from "hono/jwt";
+import { RetrieveProfileResponseDto } from "../application/dtos/RetrieveProfileResponseDto";
 
 export const ProfileRouter = new Hono();
 
 ProfileRouter.use(
-  "/",
+  "/*",
   jwt({
     secret: Bun.env.JWT_SECRET,
   })
@@ -29,15 +30,17 @@ ProfileRouter.patch(
     );
     const { success, message, profile } = await useCase.execute(userId, data);
 
+    const filteredProfile = RetrieveProfileResponseDto.fromDomain(profile!);
+
     if (success) {
-      return c.json({ message: "Profile updated", data: profile });
+      return c.json({ message: "Profile updated", data: filteredProfile });
     } else {
       return c.json({ message }, 400);
     }
   }
 );
 
-ProfileRouter.get("/", SessionMiddleware, async (c) => {
+ProfileRouter.get("/me", SessionMiddleware, async (c) => {
   const { userId } = c.get("Session");
 
   const useCase = container.resolve<RetrieveProfileUseCase>(
@@ -45,8 +48,27 @@ ProfileRouter.get("/", SessionMiddleware, async (c) => {
   );
   const { success, message, profile } = await useCase.execute(userId);
 
+  const filteredProfile = RetrieveProfileResponseDto.fromDomain(profile!);
+
   if (success) {
-    return c.json({ message: "Profile fetched", data: profile });
+    return c.json({ message: "Profile fetched", data: filteredProfile });
+  } else {
+    return c.json({ message }, 400);
+  }
+});
+
+ProfileRouter.get("/:userId", SessionMiddleware, async (c) => {
+  const { userId } = c.req.param();
+
+  const useCase = container.resolve<RetrieveProfileUseCase>(
+    RetrieveProfileUseCase
+  );
+  const { success, message, profile } = await useCase.execute(userId);
+
+  const filteredProfile = RetrieveProfileResponseDto.fromDomain(profile!);
+
+  if (success) {
+    return c.json({ message: "Profile fetched", data: filteredProfile });
   } else {
     return c.json({ message }, 400);
   }

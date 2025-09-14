@@ -23,6 +23,8 @@ app.route("/api/v1/profile", ProfileRouter);
 app.notFound((c) => c.json({ message: "Not Found" }, 404));
 
 app.onError((err, c) => {
+  // Querio los de stack, quiero saber ue pasa
+  console.error("Stack trace:", err.stack);
   console.error(`Error occurred: ${err}`);
   return c.json({ message: "Internal Server Error" }, 500);
 });

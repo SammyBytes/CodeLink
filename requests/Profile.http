@@ -1,5 +1,6 @@
 ### Variables
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMUs1MlY2TVoxUUdKOVMyR1BZMjBCQTlYMCIsInNlc3Npb25JZCI6IjAxSzUzNDNLR1RFMktZTjFYMlhUWFg0MkVOIiwiZXhwIjoxNzU3ODIxMjQxfQ.dra0j9SrqyfY4Ry1PvJ8qBHno4WaIRx_6oT2o21dDpU
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMUs1MlY2TVoxUUdKOVMyR1BZMjBCQTlYMCIsInNlc3Npb25JZCI6IjAxSzUzNVhDQzRHWkUyTVhNS0ZIRzFaRUo0IiwiZXhwIjoxNzU3ODIzMTM1fQ.rNYjYZ3wP8SP3mydy2Nsx0rD5D6XXvNj7IU5GdXxkn4
+@refreshToken = 01K535XCC22VAW8Y6W1C63K8T6
 @userId = 01K52V6MZ1QGJ9S2GPY20BA9X0
 @host = http://localhost:1234
 
@@ -20,6 +21,10 @@ Content-Type: application/json
   "tools": ["VSCode", "Git"]
 }
 
-### Obtener perfil (GET)
-GET {{host}}/api/v1/profile
+### Retrieve profile (GET)
+GET {{host}}/api/v1/profile/me
+Authorization: Bearer {{token}}
+
+### Retrieve profile by userId (GET)
+GET {{host}}/api/v1/profile/{{userId}}
 Authorization: Bearer {{token}}
