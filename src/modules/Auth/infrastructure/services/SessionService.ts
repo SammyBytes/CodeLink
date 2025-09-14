@@ -3,6 +3,7 @@ import type { ISessionService } from "@modules/Auth/application/services/ISessio
 import type { ISessionRepository } from "@modules/Auth/core/repositories/ISessionRepository";
 import { AUTH_INFRASTRUCTURE_TOKENS } from "../InfrastructureTokens";
 import { ulid } from "ulid";
+import { SessionEntity } from "@modules/Auth/core/entities/SessionEntity";
 @injectable()
 export class SessionService implements ISessionService {
   constructor(
@@ -11,6 +12,18 @@ export class SessionService implements ISessionService {
     @inject(AUTH_INFRASTRUCTURE_TOKENS.RedisSessionRepository)
     private readonly redisRepo: ISessionRepository
   ) {}
+
+  async findByRefreshToken(refreshToken: string) {
+    const hash = await this.hashToken(refreshToken);
+
+    const session =
+      (await this.redisRepo.findByRefreshToken(hash)) ||
+      (await this.sessionRepo.findByRefreshToken(hash));
+
+    if (!session || session.revoked) return null;
+
+    return { userId: session.userId, sessionId: session.sessionId };
+  }
 
   async create(
     userId: string,
@@ -66,24 +79,6 @@ export class SessionService implements ISessionService {
       this.redisRepo.revoke(sessionId),
       this.sessionRepo.revoke(sessionId),
     ]).then(() => {});
-  }
-
-  async rotateRefreshToken(
-    sessionId: string,
-    newRefreshToken: string,
-    expiresIn: number
-  ): Promise<void> {
-    const expiresAt = new Date(Date.now() + expiresIn * 1000);
-
-    const refreshTokenHash = await this.hashToken(newRefreshToken);
-    await Promise.allSettled([
-      this.redisRepo.rotateRefreshToken(sessionId, refreshTokenHash, expiresAt),
-      this.sessionRepo.rotateRefreshToken(
-        sessionId,
-        refreshTokenHash,
-        expiresAt
-      ),
-    ]);
   }
 
   private async hashToken(token: string): Promise<string> {
