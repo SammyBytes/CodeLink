@@ -11,6 +11,7 @@ import { handleZodError } from "@shared/validations/FormatZodErrors";
 import type { ISessionService } from "@modules/Auth/application/services/ISessionService";
 import { createJWT } from "../helpers/JwtHelper";
 import { UserLoginResponseDTO } from "../dtos/UserLoginResponseDTO";
+import { IdGenerator } from "@shared/IdGenerator";
 
 @injectable()
 export class LoginUseCase {
@@ -47,7 +48,7 @@ export class LoginUseCase {
       }
 
       // Generate session
-      const refreshToken = Bun.randomUUIDv7();
+      const refreshToken = IdGenerator.newId();
       const sessionId = await this.sessionService.create(
         user.userId,
         refreshToken,

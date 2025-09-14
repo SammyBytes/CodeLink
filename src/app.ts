@@ -4,8 +4,11 @@ import "@shared/di/Container";
 import { Hono } from "hono";
 import { logger } from "hono/logger";
 import { AuthRouter } from "@modules/Auth/interfaces/router";
+import type { JwtVariables } from "hono/jwt";
 
-const app = new Hono();
+type Variables = JwtVariables;
+
+const app = new Hono<{ Variables: Variables }>();
 app.use("*", logger());
 
 app.get("/", (c) => c.json({ message: "Welcome to CodeLink API" }));

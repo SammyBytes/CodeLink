@@ -61,11 +61,11 @@ export class SessionService implements ISessionService {
     return true;
   }
 
-  async revoke(sessionId: string): Promise<void> {
-    await Promise.all([
+  revoke(sessionId: string): Promise<void> {
+    return Promise.allSettled([
       this.redisRepo.revoke(sessionId),
       this.sessionRepo.revoke(sessionId),
-    ]);
+    ]).then(() => {});
   }
 
   async rotateRefreshToken(
@@ -76,7 +76,7 @@ export class SessionService implements ISessionService {
     const expiresAt = new Date(Date.now() + expiresIn * 1000);
 
     const refreshTokenHash = Bun.hash(newRefreshToken).toString();
-    await Promise.all([
+    await Promise.allSettled([
       this.redisRepo.rotateRefreshToken(sessionId, refreshTokenHash, expiresAt),
       this.sessionRepo.rotateRefreshToken(
         sessionId,

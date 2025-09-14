@@ -11,7 +11,7 @@ import {
   formatZodErrors,
   handleZodError,
 } from "@shared/validations/FormatZodErrors";
-import { ulid } from "ulid";
+import { IdGenerator } from "@shared/IdGenerator";
 
 @injectable()
 export class RegisterUseCase {
@@ -40,9 +40,8 @@ export class RegisterUseCase {
       }
 
       const hashedPassword = await this.passwordHasher.hash(data.data.password);
-      const userId = ulid();
       const user: IUserEntity = UserEntity.createNew(
-        userId,
+        IdGenerator.newId(),
         data.data.email,
         data.data.username,
         hashedPassword
