@@ -93,8 +93,12 @@ Create a `.env` file based on `.env.example`:
 TURSO_DATABASE_URL="your_turso_url"
 TURSO_AUTH_TOKEN="your_auth_token"
 
+
 # Redis
 REDIS_URL="redis://localhost:6379"
+REDIS_USERNAME="defult",
+REDIS_PORT=6739
+REDIS_PASSWORD="your_redis_password"
 
 # JWT
 JWT_SECRET="super-secret"
