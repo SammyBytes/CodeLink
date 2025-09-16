@@ -14,7 +14,7 @@ import { log } from "app";
 export class RegenerateTokensUseCase {
   constructor(
     @inject(AUTH_INFRASTRUCTURE_TOKENS.ISessionService)
-    private sessionService: ISessionService,
+    private sessionService: ISessionService
   ) {}
 
   async execute(input: unknown) {
@@ -24,9 +24,7 @@ export class RegenerateTokensUseCase {
 
       if (!success) {
         const { message } = handleZodError(error);
-        log.warn(
-          `RegenerateTokensUseCase - Validation failed: ${message}`
-        );
+        log.warn(`RegenerateTokensUseCase - Validation failed: ${message}`);
         return Result.fail(message);
       }
 
@@ -43,9 +41,7 @@ export class RegenerateTokensUseCase {
       // Validate session exists and is valid
       const isValid = await this.sessionService.validate(userId, sessionId);
       if (!isValid) {
-        log.warn(
-          `RegenerateTokensUseCase - Invalid session: ${sessionId}`
-        );
+        log.warn(`RegenerateTokensUseCase - Invalid session: ${sessionId}`);
         return Result.fail("Invalid session");
       }
 
@@ -64,7 +60,6 @@ export class RegenerateTokensUseCase {
         sessionId: newSession,
       });
 
-      
       log.info(
         `RegenerateTokensUseCase - Tokens regenerated for user: ${userId}, session: ${sessionId}`
       );
@@ -74,7 +69,13 @@ export class RegenerateTokensUseCase {
         refreshToken: newRefreshToken,
       });
     } catch (error) {
-      log.error(`RegenerateTokensUseCase - Error: ${error}`);
+      log.error(
+        {
+          message: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : undefined,
+        },
+        "RegenerateTokensUseCase - Failed to regenerate tokens"
+      );
       return Result.fail("Failed to regenerate tokens");
     }
   }
