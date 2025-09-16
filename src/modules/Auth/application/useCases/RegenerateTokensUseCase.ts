@@ -8,13 +8,13 @@ import { LoggerConfig } from "@configs/logger";
 import { Result } from "@shared/Result";
 import { IdGenerator } from "@shared/IdGenerator";
 import { createJWT } from "../helpers/JwtHelper";
+import { log } from "app";
 
 @injectable()
 export class RegenerateTokensUseCase {
   constructor(
     @inject(AUTH_INFRASTRUCTURE_TOKENS.ISessionService)
     private sessionService: ISessionService,
-    @inject(LoggerConfig) private logger: LoggerConfig
   ) {}
 
   async execute(input: unknown) {
@@ -24,7 +24,7 @@ export class RegenerateTokensUseCase {
 
       if (!success) {
         const { message } = handleZodError(error);
-        this.logger.log.warn(
+        log.warn(
           `RegenerateTokensUseCase - Validation failed: ${message}`
         );
         return Result.fail(message);
@@ -34,7 +34,7 @@ export class RegenerateTokensUseCase {
         (await this.sessionService.findByRefreshToken(data.refreshToken)) || {};
 
       if (!userId || !sessionId) {
-        this.logger.log.warn(
+        log.warn(
           `RegenerateTokensUseCase - Refresh token not found or invalid`
         );
         return Result.fail("Invalid refresh token");
@@ -43,7 +43,7 @@ export class RegenerateTokensUseCase {
       // Validate session exists and is valid
       const isValid = await this.sessionService.validate(userId, sessionId);
       if (!isValid) {
-        this.logger.log.warn(
+        log.warn(
           `RegenerateTokensUseCase - Invalid session: ${sessionId}`
         );
         return Result.fail("Invalid session");
@@ -65,7 +65,7 @@ export class RegenerateTokensUseCase {
       });
 
       
-      this.logger.log.info(
+      log.info(
         `RegenerateTokensUseCase - Tokens regenerated for user: ${userId}, session: ${sessionId}`
       );
 
@@ -74,7 +74,7 @@ export class RegenerateTokensUseCase {
         refreshToken: newRefreshToken,
       });
     } catch (error) {
-      this.logger.log.error(`RegenerateTokensUseCase - Error: ${error}`);
+      log.error(`RegenerateTokensUseCase - Error: ${error}`);
       return Result.fail("Failed to regenerate tokens");
     }
   }

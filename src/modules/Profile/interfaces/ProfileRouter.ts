@@ -8,6 +8,9 @@ import { RetrieveProfileUseCase } from "../application/useCases/RetrieveProfileU
 import { jwt } from "hono/jwt";
 import { RetrieveProfileResponseDto } from "../application/dtos/RetrieveProfileResponseDto";
 import { publicRateLimit } from "@configs/honojs/config";
+import { FilterProfilesUseCase } from "../application/useCases/FilterProfilesUseCase";
+import { filterTechProfilesSchema } from "../core/validations/ProfileSchemas";
+import { zValidationErrorHandler as zValidationErrorHandlerQuery } from "@shared/validations/ZodMiddleware";
 
 export const ProfileRouter = new Hono();
 
@@ -46,7 +49,7 @@ ProfileRouter.patch(
 );
 
 ProfileRouter.get("/me", publicRateLimit, SessionMiddleware, async (c) => {
-  const { userId } = c.get("Session") 
+  const { userId } = c.get("Session");
 
   const useCase = container.resolve<RetrieveProfileUseCase>(
     RetrieveProfileUseCase
@@ -84,3 +87,24 @@ ProfileRouter.get("/:userId", publicRateLimit, SessionMiddleware, async (c) => {
   const filteredProfile = RetrieveProfileResponseDto.fromDomain(profile!);
   return c.json({ message: "Profile fetched", data: filteredProfile });
 });
+
+ProfileRouter.get(
+  "/",
+  publicRateLimit,
+  SessionMiddleware,
+  zValidationErrorHandlerQuery("query", filterTechProfilesSchema),
+  async (c) => {
+    const data = c.get("validatedData");
+
+    const useCase = container.resolve<FilterProfilesUseCase>(
+      FilterProfilesUseCase
+    );
+    const { isSuccess, error, value: profiles } = await useCase.execute(data);
+
+    if (!isSuccess) {
+      return c.json({ error }, 400);
+    }
+
+    return c.json({ message: "Profiles fetched", data: profiles });
+  }
+);

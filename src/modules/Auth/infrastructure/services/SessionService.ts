@@ -15,7 +15,7 @@ export class SessionService implements ISessionService {
 
   async findByRefreshToken(refreshToken: string) {
     const hash = await this.hashToken(refreshToken);
-
+    console.log("HASH", hash);
     const session =
       (await this.redisRepo.findByRefreshToken(hash)) ||
       (await this.sessionRepo.findByRefreshToken(hash));

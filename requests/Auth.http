@@ -1,6 +1,6 @@
 # Variables
 @host = http://localhost:1234
-@refreshToken = 01K53E3QMYC0YANCP7ZE6ENQ84
+@refreshToken = 01K580QDPN9X04614F375XBXGR
 
 ### Register a new user
 POST {{host}}/api/v1/auth/register
