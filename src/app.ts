@@ -8,9 +8,12 @@ import { ProfileRouter } from "@modules/Profile/interfaces/ProfileRouter";
 import { jwt, type JwtVariables } from "hono/jwt";
 import { secureHeaders } from "hono/secure-headers";
 import { HTTPException } from "hono/http-exception";
+import { LoggerConfig } from "@configs/logger";
+import { FilterProfileRouter } from "@modules/Profile/interfaces/FilterProfileRouter";
 
 type Variables = JwtVariables;
 
+export const log = LoggerConfig.getInstance();
 const app = new Hono<{ Variables: Variables }>();
 app.use("*", logger());
 app.use(
@@ -31,6 +34,7 @@ app.use(
 );
 app.route("/api/v1/auth", AuthRouter);
 app.route("/api/v1/profile", ProfileRouter);
+app.route("/api/v1/profile/filters", FilterProfileRouter);
 
 app.notFound((c) => c.json({ message: "Not Found" }, 404));
 

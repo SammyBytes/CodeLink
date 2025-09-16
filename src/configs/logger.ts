@@ -1,40 +1,44 @@
 import pino, { Logger } from "pino";
-import { injectable } from "tsyringe";
 
-@injectable()
 export class LoggerConfig {
-  public log: Logger;
+  private static _instance: Logger;
 
-  constructor() {
-    const isProd = Bun.env.NODE_ENV === "production";
-    const level = Bun.env.LOG_LEVEL || (isProd ? "info" : "debug");
+  private constructor() {}
 
-    this.log = pino(
-      {
-        level,
-        timestamp: pino.stdTimeFunctions.isoTime,
-        formatters: {
-          level: (label) => ({ level: label }), // Change "level" key to "level"
+  public static getInstance(): Logger {
+    if (!this._instance) {
+      const isProd = Bun.env.NODE_ENV === "production";
+      const level = Bun.env.LOG_LEVEL || (isProd ? "info" : "debug");
+
+      this._instance = pino(
+        {
+          level,
+          timestamp: pino.stdTimeFunctions.isoTime,
+          formatters: {
+            level: (label) => ({ level: label }),
+          },
         },
-      },
-      isProd
-        ? undefined
-        : pino.transport({
-            target: "pino-pretty",
-            options: {
-              colorize: true,
-              translateTime: "SYS:standard",
-              ignore: "pid,hostname",
-            },
-          })
-    );
+        isProd
+          ? undefined
+          : pino.transport({
+              target: "pino-pretty",
+              options: {
+                colorize: true,
+                translateTime: "SYS:standard",
+                ignore: "pid,hostname",
+              },
+            })
+      );
 
-    process.on("uncaughtException", (err) => {
-      this.log.error({ err }, "Uncaught Exception");
-    });
+      process.on("uncaughtException", (err) => {
+        this._instance.error({ err }, "Uncaught Exception");
+      });
 
-    process.on("unhandledRejection", (reason) => {
-      this.log.error({ reason }, "Unhandled Rejection");
-    });
+      process.on("unhandledRejection", (reason) => {
+        this._instance.error({ reason }, "Unhandled Rejection");
+      });
+    }
+
+    return this._instance;
   }
 }

@@ -10,4 +10,37 @@ export const updateProfileSchema = z.object({
   frameworks: z.array(z.string()),
   tools: z.array(z.string()),
 });
-    
+
+/**
+ * Zod schema for filtering technology profiles.
+ *
+ * This schema validates the structure of filter objects used to query tech profiles.
+ *
+ * @property {string[]} [languages] - Optional array of language names to filter by.
+ * @property {string[]} [tools] - Optional array of tool names to filter by.
+ * @property {string[]} [frameworks] - Optional array of framework names to filter by.
+ * @property {number} [page] - Optional page number for pagination (minimum value: 1).
+ * @property {number} [limit] - Optional maximum number of results per page (minimum: 1, maximum: 100).
+ */
+export const filterTechProfilesSchema = z.object({
+  languages: z.preprocess((val) => {
+    if (!val) return undefined;
+    return Array.isArray(val) ? val : [val];
+  }, z.array(z.string()).optional()),
+  tools: z.preprocess((val) => {
+    if (!val) return undefined;
+    return Array.isArray(val) ? val : [val];
+  }, z.array(z.string()).optional()),
+  frameworks: z.preprocess((val) => {
+    if (!val) return undefined;
+    return Array.isArray(val) ? val : [val];
+  }, z.array(z.string()).optional()),
+  page: z.preprocess(
+    (val) => (val ? Number(val) : undefined),
+    z.number().min(1).optional()
+  ),
+  limit: z.preprocess(
+    (val) => (val ? Number(val) : undefined),
+    z.number().min(1).max(100).optional()
+  ),
+});

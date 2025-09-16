@@ -12,11 +12,11 @@ import type { ISessionService } from "@modules/Auth/application/services/ISessio
 import { createJWT } from "../helpers/JwtHelper";
 import { UserLoginResponseDTO } from "../dtos/UserLoginResponseDTO";
 import { IdGenerator } from "@shared/IdGenerator";
+import { log } from "app";
 
 @injectable()
 export class LoginUseCase {
   constructor(
-    @inject(LoggerConfig) private logger: LoggerConfig,
     @inject(AUTH_INFRASTRUCTURE_TOKENS.IUserRepository)
     private userRepo: IUserRepository,
     @inject(AUTH_INFRASTRUCTURE_TOKENS.Argon2dPasswordHasherServices)
@@ -30,7 +30,7 @@ export class LoginUseCase {
       const { success, data, error } = await loginSchema.safeParseAsync(input);
       if (!success) {
         const message = handleZodError(error).message;
-        this.logger.log.warn({ message }, "Validation failed");
+        log.warn({ message }, "Validation failed");
         return Result.fail(message);
       }
 
@@ -60,7 +60,7 @@ export class LoginUseCase {
 
       return Result.ok({ accessToken, refreshToken });
     } catch (error) {
-      this.logger.log.error({ error }, "Login failed");
+      log.error({ error }, "Login failed");
       return Result.fail("Login failed");
     }
   }
