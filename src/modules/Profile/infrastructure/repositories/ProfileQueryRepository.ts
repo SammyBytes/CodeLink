@@ -71,10 +71,10 @@ export class ProfileQueryRepository implements IProfileQueryRepository {
 
     const profiles = await this.turso.execute({
       sql: `
-    SELECT *
-    FROM profile
-    WHERE ${whereClause}
-    LIMIT ? OFFSET ?;
+            SELECT *
+            FROM profile
+            WHERE ${whereClause}
+            LIMIT ? OFFSET ?;
   `,
       args,
     });
