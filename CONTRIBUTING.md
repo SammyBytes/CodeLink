@@ -49,7 +49,6 @@ We follow a **two-main-branch workflow**:
    git checkout develop
    git pull
    git checkout -b feat/authentication
-
     ```
 
 2. Work on your changes, commit often with clear messages:
