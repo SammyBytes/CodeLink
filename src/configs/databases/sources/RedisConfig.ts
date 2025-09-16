@@ -1,9 +1,19 @@
-import { RedisClient } from "bun";
+import {
+  REDIS_PASSWORD,
+  REDIS_PORT,
+  REDIS_HOST,
+  REDIS_USERNAME,
+} from "@configs/env/Env";
+import Redis from "ioredis";
 
-if (!Bun.env.REDIS_URL)
-  throw new Error("REDIS_URL is not defined in environment variables");
+const redisClient = new Redis({
+  host: REDIS_HOST,
+  password: REDIS_PASSWORD,
+  username: REDIS_USERNAME,
+  port: REDIS_PORT,
+});
 
-const redisClient = new RedisClient(Bun.env.REDIS_URL, {
-  autoReconnect: true,
+redisClient.on("error", (err) => {
+  console.error("[ioredis] Error event:", err);
 });
 export default redisClient;

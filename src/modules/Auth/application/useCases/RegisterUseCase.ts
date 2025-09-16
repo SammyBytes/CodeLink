@@ -12,6 +12,7 @@ import {
   handleZodError,
 } from "@shared/validations/FormatZodErrors";
 import { IdGenerator } from "@shared/IdGenerator";
+import { log } from "app";
 
 @injectable()
 export class RegisterUseCase {
@@ -19,8 +20,7 @@ export class RegisterUseCase {
     @inject(AUTH_INFRASTRUCTURE_TOKENS.IUserRepository)
     private userRepo: IUserRepository,
     @inject(AUTH_INFRASTRUCTURE_TOKENS.Argon2dPasswordHasherServices)
-    private passwordHasher: IPasswordHasherServices,
-    @inject(LoggerConfig) private logger: LoggerConfig
+    private passwordHasher: IPasswordHasherServices
   ) {}
 
   async execute(input: unknown): Promise<Result<IUserEntity, string>> {
@@ -28,14 +28,14 @@ export class RegisterUseCase {
       const data = await registerSchema.safeParseAsync(input);
       if (!data.success) {
         const message = handleZodError(data.error).message;
-        this.logger.log.warn({ message }, "Validation failed");
+        log.warn({ errors: formatZodErrors(data.error) }, message);
         return Result.fail(message);
       }
 
       const existingUser = await this.userRepo.findByEmail(data.data.email);
       if (existingUser) {
         const message = `Email ${data.data.email} is already in use`;
-        this.logger.log.warn({ email: data.data.email }, message);
+        log.warn({ email: data.data.email }, message);
         return Result.fail(message);
       }
 
@@ -48,7 +48,13 @@ export class RegisterUseCase {
       );
       return Result.ok(await this.userRepo.create(user));
     } catch (error) {
-      this.logger.log.error({ error }, "Error occurred during registration");
+      log.error(
+        {
+          message: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : undefined,
+        },
+        "Internal server error during registration"
+      );
       return Result.fail("Internal server error");
     }
   }
