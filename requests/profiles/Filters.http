@@ -1,0 +1,18 @@
+### Variables
+@host = http://localhost:1234
+@token =eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwMUs1MlY2TVoxUUdKOVMyR1BZMjBCQTlYMCIsInNlc3Npb25JZCI6IjAxSzU4MFFEUFJFV1RWMEE5WEFEWDVZTjkzIiwiZXhwIjoxNzU3OTg1NDY5fQ.F0rMc3N968JKgCeJAigD-1KcYbzGAwLjEjmGXPM3T6o
+################################################################
+### GET - Filter Tech Profiles (Stack & Skills)
+GET {{host}}/api/v1/profile/filters/tech?page=1&limit=10&languages=Html&frameworks=HonoJS
+Authorization: Bearer {{token}}
+
+
+################################################################
+### GET - Filter Tech Profiles with no filters (all paginated)
+GET {{host}}/api/v1/profile/filters/tech?page=1&limit=20
+Authorization: Bearer {{token}}
+
+################################################################
+### GET - Filter Tech Profiles with invalid params (error 400)
+GET {{host}}/api/v1/profile/filters/tech?page=0&limit=500
+Authorization: Bearer {{token}}
