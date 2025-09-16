@@ -16,9 +16,9 @@ export const updateProfileSchema = z.object({
  *
  * This schema validates the structure of filter objects used to query tech profiles.
  *
- * @property {string[]} [stack] - Optional array of technology stack names to filter by.
- * @property {string[]} [skills] - Optional array of skill names to filter by.
- * @property {string[]} [projects] - Optional array of project identifiers to filter by.
+ * @property {string[]} [languages] - Optional array of language names to filter by.
+ * @property {string[]} [tools] - Optional array of tool names to filter by.
+ * @property {string[]} [frameworks] - Optional array of framework names to filter by.
  * @property {number} [page] - Optional page number for pagination (minimum value: 1).
  * @property {number} [limit] - Optional maximum number of results per page (minimum: 1, maximum: 100).
  */

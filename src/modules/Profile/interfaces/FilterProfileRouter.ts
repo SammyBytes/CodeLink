@@ -1,12 +1,7 @@
 import { SessionMiddleware } from "@shared/validations/SessionMiddleware";
-import { zValidationErrorHandler } from "@shared/validations/ZodMiddleware";
 import { Hono } from "hono";
 import { container } from "tsyringe";
-import { updateProfileSchema } from "../core/validations/ProfileSchemas";
-import { RegisterProfileUseCase } from "../application/useCases/RegisterProfileUseCase";
-import { RetrieveProfileUseCase } from "../application/useCases/RetrieveProfileUseCase";
 import { jwt } from "hono/jwt";
-import { RetrieveProfileResponseDto } from "../application/dtos/RetrieveProfileResponseDto";
 import { publicRateLimit } from "@configs/honojs/config";
 import { FilterProfilesUseCase } from "../application/useCases/FilterProfilesUseCase";
 import { filterTechProfilesSchema } from "../core/validations/ProfileSchemas";
