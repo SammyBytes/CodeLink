@@ -49,3 +49,26 @@ We follow a **two-main-branch workflow**:
    git checkout develop
    git pull
    git checkout -b feat/authentication
+    ```
+
+2. Work on your changes, commit often with clear messages:
+
+    ```sh
+    git add .
+    git commit -m "feat(auth): implement JWT authentication"
+    ```
+
+3. Push your branch to the remote repository:
+
+    ```sh
+    git push origin feat/authentication
+    ```
+
+4. Open a Pull Request (PR) to `develop`, describing your changes and linking any relevant issues.
+5. Request reviews from team members.
+6. After approval and passing all checks, merge the PR into `develop`.
+7. Once `develop` has accumulated enough changes and is stable, merge it into `main` for a new release.
+
+### 📊 Visual Representation
+
+![GitFlow](./assets/images/docs/GitFlow.svg)
