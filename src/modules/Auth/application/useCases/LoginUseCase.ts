@@ -59,8 +59,14 @@ export class LoginUseCase {
       const accessToken = await createJWT({ userId: user.userId, sessionId });
 
       return Result.ok({ accessToken, refreshToken });
-    } catch (error) {
-      log.error({ error }, "Login failed");
+    } catch (err) {
+      log.error(
+        {
+          message: err instanceof Error ? err.message : String(err),
+          stack: err instanceof Error ? err.stack : undefined,
+        },
+        "Login failed"
+      );
       return Result.fail("Login failed");
     }
   }

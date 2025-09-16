@@ -1,13 +1,13 @@
 import { ISessionEntity } from "@modules/Auth/core/models/ISessionEntity";
 import { SessionMapper } from "../../mappers/SessionMapper";
 import { ISessionRepository } from "@modules/Auth/core/repositories/ISessionRepository";
-import { RedisClient } from "bun";
 
 import { inject, injectable } from "tsyringe";
+import Redis from "ioredis";
 
 @injectable()
 export class RedisSessionRepository implements ISessionRepository {
-  constructor(@inject(RedisClient) private redisClient: RedisClient) {}
+  constructor(@inject(Redis) private redisClient: Redis) {}
   async findByRefreshToken(
     refreshToken: string
   ): Promise<ISessionEntity | null> {
