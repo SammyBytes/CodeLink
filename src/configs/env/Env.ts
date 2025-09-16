@@ -8,7 +8,7 @@ const enviromentsVariables = z.object({
   JWT_SECRET: z.string().min(1).default("secret"),
   LOG_LEVEL: z.string().min(4).default("dev"),
   TURSO_AUTH_TOKEN: z.string().min(8).default("your-token"),
-  TURSO_DATABASE_URL: z.string().min(1).default("http://turos.com"),
+  TURSO_DATABASE_URL: z.string().min(1).default("https://tursodb.com"),
 });
 
 const { success, data, error } = enviromentsVariables.safeParse(Bun.env);
