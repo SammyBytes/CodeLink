@@ -7,3 +7,8 @@ export interface IMapper<Domain, Persistence> {
   toDomain(raw: Persistence): Domain;
   toPersistence(entity: Domain): Persistence;
 }
+
+export interface IMapperEnum<Domain, Persistence> {
+  toDomainEnum(raw: Persistence): Domain;
+  toPersistenceEnum(entity: Domain): Persistence;
+}

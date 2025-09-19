@@ -1,13 +1,16 @@
+import { StatusProject } from "../common/StatusProject";
 import { IProjectModel } from "../models/IProjectModel";
 
 export class ProjectEntity implements IProjectModel {
   id!: number;
+  projectId!: string;
   profileId!: string;
   title!: string;
   description!: string;
   link?: string;
   repo?: string;
   tags!: string[];
+  status!: StatusProject;
   createdAt!: Date;
   updatedAt!: Date;
 

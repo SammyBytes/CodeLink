@@ -83,15 +83,26 @@ model Profile {
 }
 
 model Project {
-  id          Int       @id @default(autoincrement())
+  id          Int           @id @default(autoincrement())
+  projectId   String        @unique
   profileId   String
   title       String
   description String
   link        String?
   repo        String?
-  tags        Json      @default("[]")
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  profiles    Profile[] @relation("ProfileProjects")
-  Profile     Profile   @relation(fields: [profileId], references: [userId], onDelete: Cascade)
+  tags        Json          @default("[]")
+  status      StatusProject @default(ACTIVE)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  profiles    Profile[]     @relation("ProfileProjects")
+  Profile     Profile       @relation(fields: [profileId], references: [userId], onDelete: Cascade)
+
+  @@index([profileId])
+  @@index([profileId, projectId])
+}
+
+enum StatusProject {
+  ACTIVE
+  ARCHIVED
+  INACTIVE
 }
