@@ -11,15 +11,17 @@ export class ProjectSearchRepository implements IProjectSearchRepository {
     @inject(SHARED_TOKENS.TursoClient) private tursoClient: Client
   ) {}
 
-  findByProjectId(projectId: string): Promise<boolean> {
-    return this.prisma.project
-      .findUnique({ where: { projectId } })
-      .then((project) => !!project);
+  async findByProjectId(projectId: string): Promise<boolean> {
+    const project = await this.prisma.project.findUnique({
+      where: { projectId },
+    });
+    return !!project;
   }
-  findByProfileId(profileId: string): Promise<boolean> {
-    return this.prisma.project
-      .findFirst({ where: { profileId } })
-      .then((project) => !!project);
+  async findByProfileId(profileId: string): Promise<boolean> {
+    const project = await this.prisma.project.findFirst({
+      where: { profileId },
+    });
+    return !!project;
   }
   async findAllTags(
     filter: { tags: string[] },
